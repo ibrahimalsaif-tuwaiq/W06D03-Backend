@@ -83,7 +83,29 @@ const updateTodo = (req, res) => {
 };
 
 const deleteTodo = (req, res) => {
-  // deleteTodo
+  const userObject = req.body;
+
+  fs.readFile("./db/usersTodo.json", (err, data) => {
+    const users = JSON.parse(data.toString());
+
+    const loggedinUser = users.find(
+      (user) => user.username == userObject.username
+    );
+
+    if (loggedinUser) {
+      users.forEach((user) => {
+        if (user.username == loggedinUser.username) {
+          const newTodo = user.todos.filter((todo) => todo.id != userObject.id);
+          user.todos = newTodo;
+          fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
+            res.status(200).json(user.todos);
+          });
+        }
+      });
+    } else {
+      res.status(401).json("You have to login first!!");
+    }
+  });
 };
 
 module.exports = { getTodos, addTodo, updateTodo, deleteTodo };
