@@ -23,7 +23,28 @@ const getTodos = (req, res) => {
 };
 
 const addTodo = (req, res) => {
-  // addTodo
+  const userObject = req.body;
+
+  fs.readFile("./db/usersTodo.json", (err, data) => {
+    const users = JSON.parse(data.toString());
+
+    const loggedinUser = users.find(
+      (user) => user.username == userObject.username
+    );
+
+    if (loggedinUser) {
+      users.forEach((user) => {
+        if (user.username == loggedinUser.username) {
+          user.todos.push(userObject.todo);
+          fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
+            res.status(200).json(user.todos);
+          });
+        }
+      });
+    } else {
+      res.status(401).json("You have to login first!!");
+    }
+  });
 };
 
 const updateTodo = (req, res) => {
