@@ -1,0 +1,27 @@
+{
+  "name": "W06D03-Backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ibrahimalsaif-tuwaiq/W06D03-Backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ibrahimalsaif-tuwaiq/W06D03-Backend/issues"
+  },
+  "homepage": "https://github.com/ibrahimalsaif-tuwaiq/W06D03-Backend#readme",
+  "dependencies": {
+    "cores": "^0.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1"
+  }
+}
