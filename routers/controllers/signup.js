@@ -17,7 +17,7 @@ const signup = (req, res) => {
           todos: [],
         });
         fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
-          res.status(200).json("User added");
+          res.status(201).json("User added");
         });
       }
     });
