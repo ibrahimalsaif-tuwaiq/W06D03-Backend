@@ -1,17 +1,5 @@
-const getTodos = (req, res) => {
-  // getTodos
+const login = (req, res) => {
+  // login
 };
 
-const addTodo = (req, res) => {
-  // addTodo
-};
-
-const updateTodo = (req, res) => {
-  // updateTodo
-};
-
-const deleteTodo = (req, res) => {
-  // deleteTodo
-};
-
-module.exports = {getTodos, addTodo, updateTodo, deleteTodo};
+module.exports = login;
