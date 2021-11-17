@@ -2,6 +2,8 @@ const fs = require("fs");
 
 const getTodos = (req, res) => {
   const userObject = req.body;
+  let response;
+  let status;
 
   fs.readFile("./db/usersTodo.json", (err, data) => {
     const users = JSON.parse(data.toString());
@@ -13,11 +15,15 @@ const getTodos = (req, res) => {
     if (loggedinUser) {
       users.forEach((user) => {
         if (user.username == loggedinUser.username) {
-          res.status(200).json(user.todos);
+          userNotFound = false;
+          response = user.todos;
+          status = 200;
         }
       });
-    } else {
-      res.status(401).json("You have to login first!!");
+    }
+
+    if (status == 200) {
+      res.status(status).json(response);
     }
   });
 };

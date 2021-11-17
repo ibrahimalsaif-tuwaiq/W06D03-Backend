@@ -3,6 +3,8 @@ const fs = require("fs");
 const login = (req, res) => {
   const loginUser = req.body;
   let userNotFound = true;
+  let response;
+  let status;
 
   fs.readFile("./db/usersTodo.json", (err, data) => {
     const users = JSON.parse(data.toString());
@@ -14,16 +16,27 @@ const login = (req, res) => {
       ) {
         if (user.password == loginUser.password) {
           userNotFound = false;
-          res.status(200).json(user);
+          response = user;
+          status = 200;
+          return;
         } else {
           userNotFound = false;
-          res.status(401).json("Password is incorrect");
+          response = "Password is incorrect";
+          status = 401;
+          return;
         }
       }
     });
 
     if (userNotFound) {
-      res.status(401).json("Username or Email doesn't exists");
+      response = "Username or Email doesn't exists";
+      status = 401;
+    }
+
+    if (status == 200) {
+      res.status(status).json(response);
+    } else {
+      res.json(response);
     }
   });
 };
