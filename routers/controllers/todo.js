@@ -2,8 +2,6 @@ const fs = require("fs");
 
 const getTodos = (req, res) => {
   const userObject = req.body;
-  let response;
-  let status;
 
   fs.readFile("./db/usersTodo.json", (err, data) => {
     const users = JSON.parse(data.toString());
@@ -13,17 +11,9 @@ const getTodos = (req, res) => {
     );
 
     if (loggedinUser) {
-      users.forEach((user) => {
-        if (user.username == loggedinUser.username) {
-          userNotFound = false;
-          response = user.todos;
-          status = 200;
-        }
-      });
-    }
-
-    if (status == 200) {
-      res.status(status).json(response);
+      res.status(200).json(loggedinUser.todos);
+    } else {
+      res.json("Your todo is empty");
     }
   });
 };
@@ -38,58 +28,55 @@ const addTodo = (req, res) => {
       (user) => user.username == userObject.username
     );
 
-    if (loggedinUser) {
-      users.forEach((user) => {
-        if (user.username == loggedinUser.username) {
-          if (user.todos.length === 0) {
-            user.todos.push({ id: 1, todo: userObject.todo });
-            fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
-              res.status(200).json(user.todos);
-            });
-          } else {
-            user.todos.push({
-              id: user.todos[user.todos.length - 1].id + 1,
-              todo: userObject.todo,
-            });
-            fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
-              res.status(200).json(user.todos);
-            });
-          }
-        }
-      });
+    if (loggedinUser && userObject.todo.length) {
+      if (loggedinUser.todos.length === 0) {
+        users[loggedinUser.id - 1].todos.push({ id: 1, todo: userObject.todo });
+        fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
+          res.status(200).json(users[loggedinUser.id - 1].todos);
+        });
+      } else {
+        users[loggedinUser.id - 1].todos.push({
+          id:
+            users[loggedinUser.id - 1].todos[
+              users[loggedinUser.id - 1].todos.length - 1
+            ].id + 1,
+          todo: userObject.todo,
+        });
+        fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
+          res.status(200).json(users[loggedinUser.id - 1].todos);
+        });
+      }
     } else {
-      res.status(401).json("You have to login first!!");
+      res.json("You have to login first!!");
     }
   });
 };
 
 const updateTodo = (req, res) => {
-  const userObject = req.body;
+  const dataObject = req.body;
+  const todoId = req.params.id;
 
   fs.readFile("./db/usersTodo.json", (err, data) => {
     const users = JSON.parse(data.toString());
 
     const loggedinUser = users.find(
-      (user) => user.username == userObject.username
+      (user) => user.username == dataObject.username
     );
 
     if (loggedinUser) {
-      users.forEach((user) => {
-        if (user.username == loggedinUser.username) {
-          user.todos[userObject.id - 1].todo = userObject.todo;
-          fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
-            res.status(200).json(user.todos);
-          });
-        }
+      users[loggedinUser.id - 1].todos[todoId - 1].todo = dataObject.todo;
+      fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
+        res.status(200).json(users[loggedinUser.id - 1].todos);
       });
     } else {
-      res.status(401).json("You have to login first!!");
+      res.json("You have to login first!!");
     }
   });
 };
 
 const deleteTodo = (req, res) => {
   const userObject = req.body;
+  const todoId = req.params.id;
 
   fs.readFile("./db/usersTodo.json", (err, data) => {
     const users = JSON.parse(data.toString());
@@ -99,17 +86,12 @@ const deleteTodo = (req, res) => {
     );
 
     if (loggedinUser) {
-      users.forEach((user) => {
-        if (user.username == loggedinUser.username) {
-          const newTodo = user.todos.filter((todo) => todo.id != userObject.id);
-          user.todos = newTodo;
-          fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
-            res.status(200).json(user.todos);
-          });
-        }
+      users[loggedinUser.id - 1].todos = users[loggedinUser.id - 1].todos.filter((todo) => todo.id != todoId);
+      fs.writeFile("./db/usersTodo.json", JSON.stringify(users), () => {
+        res.status(200).json(users[loggedinUser.id - 1].todos);
       });
     } else {
-      res.status(401).json("You have to login first!!");
+      res.json("You have to login first!!");
     }
   });
 };
